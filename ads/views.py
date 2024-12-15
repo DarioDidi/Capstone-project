@@ -27,58 +27,26 @@ from .models import Ad, Image, UserProfile
 from .serializers import ImageSerializer
 
 
-# # change to class
-# def article_create(request):
-#     if request.method == 'POST':
-#         form = ImageForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             image = form.save(commit=False)
-#             image.article = request.article  # Associate the image with the article
-#             image.save()
-#             return redirect('ad_detail', pk=request.article.pk)
-#     else:
-#         form = ImageForm()
-#     return render(request, 'article_form.html', {'form': form})
-
-
 def register(request):
     # form = {}
     if request.method == 'POST':
         form = CustomUserForm(request.POST)
-        print("is post req")
         if form.is_valid():
-            print("USER REGN FORM VALID")
             user = form.save()
             username = form.cleaned_data.get('username')
             login(request, user)
             username = form.cleaned_data.get('username')
-            # messages.success(request, f'Account created for {username}!')
             return redirect('login')
-            # return redirect('success_page')
-            # return HttpResponseRedirect(reverse('success_page'), status=201)
-            # return HttpResponseRedirect(reverse('login'), status=201)
+
         else:
-            print("form:", form)
-            print("cleaned_data:", form.cleaned_data)
-            print("form errors:", form.error_messages)
+            return render(request, 'ads/register.html', {'form': form})
     else:
         form = CustomUserForm()
     return render(request, 'ads/register.html', {'form': form})
 
 
-# class RegisterView(SuccessMessageMixin, CreateView):
-#     template_name = 'ads/register.html'
-#     success_url = reverse_lazy('login')
-#     form_class = CustomUserForm
-#     success_message = "Your profile was created successfully"
-
-
 class SuccessView(DetailView):
     template_name = 'ads/registration_success.html'
-
-
-# class RegisterView(generics.CreateAPIView):
-#     serializer_class = UserSerializer
 
 
 @login_required
@@ -99,7 +67,7 @@ def profile(request):
     context = {'u_form': u_form, 'p_form': p_form}
     return render(request, 'ads/profile.html', context)
 
-
+#require AUTHENTICATION for creating,Deleting and updating
 class AdCreateView(CreateView, mixins.LoginRequiredMixin, mixins.UserPassesTestMixin):
     model = Ad
     form_class = CreateAdForm
@@ -107,38 +75,32 @@ class AdCreateView(CreateView, mixins.LoginRequiredMixin, mixins.UserPassesTestM
     # success_url = "/"
 
     def post(self, request, *args, **kwargs):
-        print("in ad create view ")
         form = self.get_form()
         if form.is_valid():
-            print("in form user id:", request.user.id, "authenticated?", request.user.is_authenticated)
-            # owner = User.objects.get(id=request.user.id)
-            # form.instance['owner'] = owner
             form.instance.owner = self.request.user
-            print("valid form,",form)
             return super().form_valid(form)
         else:
-            print("form invalid", form.errors)
             return render(request, 'ads/ad_create.html', {'form': form})
 
     def get_success_url(self):
         return reverse_lazy('ad_detail', kwargs={'pk': self.object.pk})
-    
+
+
 class AdDetailView(DetailView):
     model = Ad
     template_name = 'ads/ad_detail.html'
     context_object_name = 'ad'
-    # pk_url_kwarg = 'pk'
+    pk_url_kwarg = 'pk'
+
 
 class AdListView(ListView):
     model = Ad
 
     def get(self, request):
-        print('REQUEST', request)
         ads = {}
         if request.user.is_authenticated:
             ads = serialize('json', self.model.objects.get(
                 owner=request.user).reverse()[:10])
-        # return render(request, 'home.html', context={'ads': ads})
         return render(request, 'ads/list_ad.html', context={'ads': ads})
 
 

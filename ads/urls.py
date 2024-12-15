@@ -13,11 +13,9 @@ urlpatterns = [
     path('', DisplayAds.as_view(), name='ads'),
     # auth and login
     path('register/', register, name='register'),
-    # path('register/', RegisterView.as_view(), name='register'),
     path('success/', SuccessView.as_view(), name='success_page'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    # path('api-token-auth/', CustomAuthToken.as_view(), name='auth_token'),
     path('api-token-auth/', obtain_auth_token, name='auth_token'),
 
     # ad CRUD
