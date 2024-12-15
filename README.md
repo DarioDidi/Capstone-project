@@ -11,7 +11,7 @@ Install and run:
 - Run python manage.py runserver
 
 Authentication:
-- Views use django auth mixins to ensure a user is logged in for Creating, Updating and Deleting operations.
+- Views use django auth mixins e.g LoginRequiredMixin to ensure a user is logged in for Creating, Updating and Deleting operations.
 - To test, create a user at "ads/register/" with username, email, password1,password2 and login at "ads/login/" with username and password. 
 - Try creating an ad at "ads/new/" with a title, description, price(2 decimal places) and tag(single word) field. 
 
