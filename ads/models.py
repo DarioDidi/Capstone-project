@@ -16,7 +16,7 @@ class UserProfile(models.Model):
         User, on_delete=models.CASCADE, related_name='profile')
     # first_name = models.CharField(max_length=50)
     # last_name = models.CharField(max_length=50)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     image = models.ImageField(default='default.jpg',
                               upload_to='../media/profile_photo')
 
@@ -37,8 +37,9 @@ class Ad(models.Model):
     posted_date = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    rating = models.IntegerField()
+    rating = models.DecimalField(decimal_places=1, max_digits=1, default=0.0)
     tags = TaggableManager()
+    price = models.DecimalField(decimal_places=2, max_digits=4, default=0.00)
     # image = models.ImageField(default='default.jpg',
     #   upload_to='../media/ad_photo')
     # images = models.ManyToManyField(Image)
