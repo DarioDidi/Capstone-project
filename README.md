@@ -16,11 +16,13 @@ Authentication:
 - Try creating an ad at "ads/new/" with a title, description, price(2 decimal places) and tag(single word) field. 
 
 # Users can request and auth token from "/api-token-auth/", for example:
-endpoint: api-token-auth/      method: POST                                
-Request: {
+- endpoint: api-token-auth/      method: POST                                
+### Request: 
+{
     "username": "johnDoe",
     "password": "password123"
 }
-Response: {
+### Response: 
+{
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 }
