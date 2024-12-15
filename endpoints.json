@@ -1,0 +1,278 @@
+API Endpoints
+Plan and document the endpoints for your API. Include the HTTP methods, request parameters, and expected responses.
+
+
+login/                      	POST        	# enter details and gain access to account
+   request: {
+    "username": "example_user",
+    "password": "user_password",
+}
+
+
+   response: {
+    "token": "****(64 length string)",
+    "user": {
+        "id": 1,
+        "username": "example_user",
+        "email": "user@example.com"
+    }
+}
+
+
+
+
+logout/                	POST     	# leave "logged  in" status
+   request: POST /logout/ HTTP/1.1
+   Authorization: Token string ****
+   Content-Type: application/json
+
+
+   response: HTTP/1.1 200 OK
+   Content-Type: application/json
+
+
+   {
+    "message": "Logout successful",
+    "status": "ok"
+}
+
+register/               	POST        	# enter details and request creation of an account   
+
+
+   request: {
+    "username": "john_doe",
+    "email": "johndoe@example.com",
+    "password": "strong_password",
+    "confirm_password": "strong_password"
+}
+
+
+   response: {
+    "message": "User created successfully",
+    "user_id": 1
+}
+
+
+create_ad/              	POST        	# auth users can create an advertisement post
+   request: {
+    "title": "New Ad",
+    "description": "This is a new ad",
+    "image_url": "https://example.com/image.jpg",
+    "price": 100.0
+}
+
+
+   {
+    "id": 42,
+    "title": "New Ad",
+    "description": "This is a new ad",
+    "image_url": "https://example.com/image.jpg",
+    "price": 100.0,
+    "owner": "user1@example.com",
+    "rating": 3.4,
+    "posted": "2024-08-15T14:27:42Z",
+    "updated_at": "2024-08-15T14:27:42Z",
+}
+
+view_ads/               	GET         	# all users can view ads and their details
+   Request:GET /ads/view_ads
+   Response: {
+    "id": 1,
+    "title": "Ad 1",
+    "description": "This is Ad 1",
+    "image_url": "https://example.com/ad1.jpg",
+    "target_url": "https://example.com/ad1-landing-page",
+    "owner": "user2@example.com",
+    "rating": 4.1,
+    "posted": "2024-08-15T14:27:42Z",
+    "updated_at": "2024-08-15T14:27:42Z",
+    "price": 520
+},
+{
+    "id": 2,
+    "title": "Ad 2",
+    "description": "This is Ad 2",
+    "image_url": "https://example.com/ad2.jpg",
+    "owner": "user2@example.com",
+    "rating": 4.1,
+    "posted": "2024-08-15T14:27:42Z",
+    "updated_at": "2024-08-15T14:27:42Z",
+    "price": 500
+},
+
+
+rating/<int:rating>/    	POST               #rate an ad
+   request: POST /api/ad_ratings/3/
+   {
+    "rating": 4,
+}
+   response: Status Code: 201 Created
+   {
+    "message": "Ad with ID 3 successfully rated"
+}
+
+
+rating/<int:rating_min>/	GET         	#List all tags with rating >= rating in the query
+   Request: GET  https: //example.com/ads?rating_min=3
+{
+    "ads": {
+        "id": 1,
+        "title": "Ad 1",
+        "description": "This is Ad 1",
+        "rating": 4,
+        "owner": "user1@example.com",
+        "posted": "2024-08-15T14:27:42Z",
+        "updated_at": "2024-08-15T14:27:42Z",
+        "price": 500
+    },
+    {
+        "id": 2,
+        "title": "Ad 2",
+        "description": "This is Ad 2",
+        "rating": 5,
+        "owner": "user2@example.com",
+        "posted": "2024-08-15T14:27:42Z",
+        "updated_at": "2024-08-15T14:27:42Z",
+        "price": "200"
+    },
+    {
+        "id": 3,
+        "title": "Ad 3",
+        "description": "This is Ad 3",
+        "rating": 3,
+        "owner": "user1@example.com",
+        "posted": "2024-08-15T14:27:42Z",
+        "updated_at": "2024-08-15T14:27:42Z",
+        "price": "100"
+    }
+}
+
+
+ad_detail/<int:pk>/ 	GET         	#Show ad details and allow authenticated user rating
+   request GET ads/ad_detail?pk=3
+   response: {
+    "id": 3,
+    "title": "Ad 3",
+    "description": "This is Ad 3",
+    "rating": 3,
+    "owner": "user1@example.com",
+    "posted": "2024-08-15T14:27:42Z",
+    "updated_at": "2024-08-15T14:27:42Z",
+    "price": "100"
+}
+
+
+update_ad/<int:pk>/   POST        	#ad owner can make changes to the ad
+   request: http: //localhost:8000/ads/3/
+   curl -X POST -H "Content-Type: application/json" -d '{
+    "id": 3,
+    "title": "Updated Ad Title",
+    "description": "updated ad description",
+    "price": 105,
+}
+   response:HTTP/1.1 200 OK
+   Content-Type: application/json
+
+
+   {
+    "status": "success",
+    "message": "Ad details updated successfully",
+    "data": {
+        "id": 3,
+        "title": "Updated Ad Title",
+        "description": "updated ad description",
+        "image_url": "https://example.com/new-image.jpg",
+        "posted": "2024-08-15T14:27:42Z",
+        "updated_at": "2024-12-11T12:21:42Z",
+        "price": "100",
+        "owner": "user1@example.com",
+        "rating": 3,
+    }
+}
+
+
+delete_ad/<int:pk>/ 	DELETE  	#Ad owner can delete ad
+   request: DELETE /delete_ad/3
+   {
+    "id": 3
+}
+
+
+   response response:HTTP/1.1 204 No Content
+   Content-Type: application/json
+   {
+    "message": "Ad with ID 3 successfully deleted"
+}
+
+
+
+
+favourites/<int:user_id>/               	GET             	#list all ads favourited by user(id=user.id)
+   request GET ads favourites/1/
+   response:HTTP/1.1 200 OK
+   Content-Type: application/json
+   {
+    {
+        "id": 1,
+        "title": "Ad 1",
+        "description": "This is Ad 1",
+        "rating": 4,
+        "owner": "user1@example.com",
+        "posted": "2024-08-15T14:27:42Z",
+        "updated_at": "2024-08-15T14:27:42Z",
+        "price": 500
+    },
+    {
+        "id": 2,
+        "title": "Ad 2",
+        "description": "This is Ad 2",
+        "rating": 5,
+        "owner": "user2@example.com",
+        "posted": "2024-08-15T14:27:42Z",
+        "updated_at": "2024-08-15T14:27:42Z",
+        "price": "200"
+    },
+}
+
+ads/search/<slug:term>/ GET 	#allow users to search for ads by keyword
+   request GET ads/search/"is"/
+   response:HTTP/1.1 200 OK
+   Content-Type: application/json
+   {
+    "ads": {
+        "id": 1,
+        "title": "Ad 1",
+        "description": "This is Ad 1",
+        "rating": 4,
+        "owner": "user1@example.com",
+        "posted": "2024-08-15T14:27:42Z",
+        "updated_at": "2024-08-15T14:27:42Z",
+        "price": 500
+    },
+    {
+        "id": 2,
+        "title": "Ad 2",
+        "description": "This is Ad 2",
+        "rating": 5,
+        "owner": "user2@example.com",
+        "posted": "2024-08-15T14:27:42Z",
+        "updated_at": "2024-08-15T14:27:42Z",
+        "price": "200"
+    },
+}
+
+
+ads/token-auth/         POST                                 #get an auth token for a registered user
+Request: {
+    "username": "johnDoe",
+    "password": "password123"
+}
+Response: {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+}
+
+ads/csrf-token/         GET                                    #get csrf token
+Request: GET 
+Response: {
+    "csrf_token": "lAIBLzj2rO5l4C3gTRKYwVSN9BGI7yL360CKZonFcCpD84LSbrzO8UprxjXu9LnM"
+}

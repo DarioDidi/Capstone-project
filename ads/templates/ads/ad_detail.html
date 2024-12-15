@@ -1,0 +1,56 @@
+{% extends 'ads/base.html' %}
+
+{% block title %}
+  {{ ad.title }}
+{% endblock %}
+
+{% block content %}
+  <h1>{{ ad.title }}</h1>
+
+  <p class="date">Published {{ ad.posted_date }} by {{ ad.owner }}</p>
+  {{ ad.content|linebreaks }}
+  {% comment %} {% for tag in ad.tags %}
+    <li>
+      <a href="{% url 'tag_ads' tag %}">{{ tag }}</a>
+    </li>
+  {% endfor %} {% endcomment %}
+
+  {% comment %} <p>
+    <a href="{% url 'ads:ad_share' ad.id %}">Share this ad</a>
+  </p> {% endcomment %}
+
+  {% comment %} <h2>Similar ads</h2>
+  {% for ad in similar_ads %}
+    <p>
+      <a href="{{ ad.get_absolute_url }}">{{ ad.title }}</a>
+    </p>
+  {% empty %}
+    There are no similar ads yet.
+  {% endfor %} {% endcomment %}
+
+  {% comment %} {% with total_comments=comments.count %}
+    <h2>{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
+  {% endwith %}
+  {% for comment in comments %}
+    <div class="comment">
+      <p class="info">Comment {{ forloop.counter }} by {{ comment.name }}
+        {{ comment.created }}</p>
+      {{ comment.body|linebreaks }}
+    </div>
+  {% empty %}
+    <p>There are no comments yet.</p>
+  {% endfor %}
+
+  {% if new_comment %}
+    <h2>Your comment has been added.</h2>
+  {% else %}
+    <h2>Add a new comment</h2>
+    <form action="." method="ad">
+      {{ comment_form.as_p }}
+      {% csrf_token %}
+      <p>
+        <input type="submit" value="Add comment" />
+      </p>
+    </form>
+  {% endif %} {% endcomment %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'ads/base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>ads:</h1>
+  <ul>
+    {% for ad in ads %}
+      <li>{{ ad.title }} by {{ ad.owner.name }} (Posted {{ ad.posted_date }})</li>
+      <p>{{ ad.description|truncatewords:20 }}</p>
+    {% endfor %}
+  </ul>
+{% endblock %}
